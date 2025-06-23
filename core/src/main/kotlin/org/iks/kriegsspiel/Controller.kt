@@ -7,12 +7,14 @@ import java.time.LocalDateTime
 import kotlin.random.Random
 
 class Controller {
+    var pieceSelected = 0
+
     fun createDiffs(currentState: GameState): MutableList<Diff> {
         val diffs: MutableList<Diff> = mutableListOf();
 
         if (Gdx.input.isKeyJustPressed(Keys.Q)) {
-            val currentPiece = currentState.pieces[0];
-            diffs.add(PieceUpdate(currentState.pieces, 0, Piece(Gdx.input.x.toFloat(),
+            val currentPiece = currentState.pieces[pieceSelected];
+            diffs.add(PieceUpdate(currentState.pieces, pieceSelected, Piece(Gdx.input.x.toFloat(),
                 480 - Gdx.input.y.toFloat(),
                 currentPiece.w,
                 currentPiece.h,
@@ -33,5 +35,16 @@ class Controller {
 
         model.updates.addAll(createDiffs(model.currentState))
         model.recomputeCurrentState()
+
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+            model.currentState.pieces.forEachIndexed { idx, piece ->
+                val x = Gdx.input.x
+                val y = Gdx.graphics.height - 1 - Gdx.input.y
+
+                if (piece.x < x && x < piece.x + piece.w && piece.y < y && y < piece.y + piece.h) {
+                    pieceSelected = idx
+                }
+            }
+        }
     }
 }

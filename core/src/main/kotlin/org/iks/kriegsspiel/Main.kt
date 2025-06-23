@@ -22,7 +22,9 @@ class Main() : ApplicationAdapter() {
     override fun create() {
         pieceTexture = Texture("IKS_Infantry_L_Template.png")
         val piece = Piece(0f, 0f, 125f, 75f, pieceTexture!!)
-        val gameState = GameState(listOf(piece))
+        val piece2 = Piece(200f, 100f, 125f, 75f, pieceTexture!!)
+
+        val gameState = GameState(listOf(piece, piece2))
         sb = SpriteBatch()
 
         model = Model(gameState)
