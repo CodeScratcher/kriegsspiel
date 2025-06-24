@@ -8,14 +8,20 @@ import kotlin.random.Random
 
 class Controller {
     var pieceSelected = 0
+    var offsetX = 0f
+    var offsetY = 0f
+    var dragging = false
 
     fun createDiffs(currentState: GameState): MutableList<Diff> {
         val diffs: MutableList<Diff> = mutableListOf();
 
-        if (Gdx.input.isKeyJustPressed(Keys.Q)) {
+        if (dragging) {
+            val cornerX = Gdx.input.x + offsetX
+            val cornerY = Gdx.graphics.height - 1 - Gdx.input.y + offsetY
+
             val currentPiece = currentState.pieces[pieceSelected];
-            diffs.add(PieceUpdate(currentState.pieces, pieceSelected, Piece(Gdx.input.x.toFloat(),
-                480 - Gdx.input.y.toFloat(),
+            diffs.add(PieceUpdate(currentState.pieces, pieceSelected, Piece(cornerX,
+                cornerY,
                 currentPiece.w,
                 currentPiece.h,
                 currentPiece.texture),
@@ -43,8 +49,13 @@ class Controller {
 
                 if (piece.x < x && x < piece.x + piece.w && piece.y < y && y < piece.y + piece.h) {
                     pieceSelected = idx
+                    offsetX = piece.x - x
+                    offsetY = piece.y - y
+                    dragging = true
                 }
             }
         }
+
+        dragging = dragging && Gdx.input.isButtonPressed(Input.Buttons.LEFT)
     }
 }
