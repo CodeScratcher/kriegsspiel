@@ -11,7 +11,15 @@ dependencies {
   annotationProcessor "org.projectlombok:lombok:$lombokVersion"
   compileOnly "org.projectlombok:lombok:$lombokVersion"
 
+  testImplementation 'org.jetbrains.kotlin:kotlin-test'
+  testImplementation 'org.mockito:mockito-core:5.18.0'
+  testImplementation "io.mockk:mockk:1.14.4"
+
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
   }
+}
+
+test {
+  useJUnitPlatform()
 }
