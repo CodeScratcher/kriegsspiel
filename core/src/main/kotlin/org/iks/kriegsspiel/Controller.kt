@@ -12,8 +12,8 @@ class Controller {
     var offsetY = 0f
     var dragging = false
 
-    fun createDiffs(currentState: GameState): MutableList<Diff> {
-        val diffs: MutableList<Diff> = mutableListOf();
+    fun createTemporaryDiffs(currentState: GameState): MutableList<Diff> {
+        val diffs: MutableList<Diff> = mutableListOf()
 
         if (dragging) {
             val cornerX = Gdx.input.x + offsetX
@@ -25,7 +25,26 @@ class Controller {
                 currentPiece.w,
                 currentPiece.h,
                 currentPiece.texture),
-            LocalDateTime.now()))
+                LocalDateTime.now()))
+        }
+
+        return diffs
+    }
+
+    fun createDiffs(currentState: GameState): MutableList<Diff> {
+        val diffs: MutableList<Diff> = mutableListOf()
+
+        if (dragging && !Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            val cornerX = Gdx.input.x + offsetX
+            val cornerY = Gdx.graphics.height - 1 - Gdx.input.y + offsetY
+
+            val currentPiece = currentState.pieces[pieceSelected];
+            diffs.add(PieceUpdate(currentState.pieces, pieceSelected, Piece(cornerX,
+                cornerY,
+                currentPiece.w,
+                currentPiece.h,
+                currentPiece.texture),
+                LocalDateTime.now()))
         }
 
         return diffs;
@@ -39,7 +58,11 @@ class Controller {
             model.updates.removeLast()
         }
 
+        model.temporaryUpdates.addAll(createTemporaryDiffs(model.currentState))
         model.updates.addAll(createDiffs(model.currentState))
+
+        dragging = dragging && Gdx.input.isButtonPressed(Input.Buttons.LEFT)
+        if (!dragging) model.temporaryUpdates.clear()
         model.recomputeCurrentState()
 
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
