@@ -36,7 +36,7 @@ class Main() : ApplicationAdapter() {
         ScreenUtils.clear(Color.BLACK)
 
         sb!!.begin()
-        model.currentState.render(sb!!)
+        model.currentTempState.render(sb!!)
         sb!!.end()
     }
 }

@@ -55,15 +55,14 @@ class Controller {
             (Gdx.input.isKeyJustPressed(Keys.CONTROL_LEFT) && Gdx.input.isKeyPressed(Keys.Z))
 
         if (ctrlZPressed && model.updates.isNotEmpty()) {
-            model.updates.removeLast()
+            model.revertChange()
         }
 
-        model.temporaryUpdates.addAll(createTemporaryDiffs(model.currentState))
-        model.updates.addAll(createDiffs(model.currentState))
+        val tempDiffs = createTemporaryDiffs(model.currentState)
+        val diffs = createDiffs(model.currentState)
 
-        dragging = dragging && Gdx.input.isButtonPressed(Input.Buttons.LEFT)
-        if (!dragging) model.temporaryUpdates.clear()
-        model.recomputeCurrentState()
+        tempDiffs.forEach { diff -> model.addTemporaryDiff(diff) }
+        diffs.forEach { diff -> model.addDiff(diff) }
 
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             model.currentState.pieces.forEachIndexed { idx, piece ->
